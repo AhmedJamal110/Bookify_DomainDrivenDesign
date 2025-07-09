@@ -34,15 +34,15 @@ public sealed class PricingService
         
         totalPrice += priceForPeriod;
 
-        if(apartment.CleeningFee.IsZero())
+        if(apartment.CleaningFee.IsZero())
         {
-            totalPrice += apartment.CleeningFee;
+            totalPrice += apartment.CleaningFee;
         }
 
 
         totalPrice  += amenityUpCharge;
 
-        return new PricingDetails(priceForPeriod, apartment.CleeningFee!, amenityUpCharge, totalPrice);
+        return new PricingDetails(priceForPeriod, apartment.CleaningFee!, amenityUpCharge, totalPrice);
 
     }
 }

@@ -1,4 +1,6 @@
 ﻿
+using Bookify.Application.Exceptions;
+
 namespace Bookify.Application.Bookings.ReserveBooking;
 internal sealed class ReserveBookingCommandHandler(
     IUserRepository _userRepository,
@@ -28,23 +30,34 @@ internal sealed class ReserveBookingCommandHandler(
         var dateRange = DateRange.Create(request.StartDate, request.EndDate);
 
         bool isOverlap = await _bookingRepository.IsOverlappingAsync(apartment, dateRange, cancellationToken);
+     
+        
         if(isOverlap)
         {
             return Result.Failure<Guid>(BookingErrors.Overlap);
         }
 
 
-        var booking = Booking.Reserve(
-            apartment, 
-            user.Id, 
-            dateRange, 
-            _dateTimeProvider.UtcNow,
-            _pricingService);
+        try
+        {
+            var booking = Booking.Reserve(
+                apartment,
+                user.Id,
+                dateRange,
+                _dateTimeProvider.UtcNow,
+                _pricingService);
 
 
-        await _unitOfWork.SaveChangesAsync(cancellationToken);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-        return Result.Success(booking.Id);
+            return Result.Success(booking.Id);
+        }
+        catch (ConcurrencyException)
+        {
+            return Result.Failure<Guid>(BookingErrors.Overlap);
+        }
+
+       
 
 
     }

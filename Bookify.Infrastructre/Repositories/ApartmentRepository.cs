@@ -1,45 +1,34 @@
-﻿
-using Bookify.Infrastructre.Database;
-
-namespace Bookify.Infrastructre.Repositories;
-internal sealed class ApartmentRepository(
-    ApplicationDbContext _context) : IApartmentRepository
+﻿namespace Bookify.Infrastructre.Repositories;
+internal sealed class ApartmentRepository : Repository<Apartment>, IApartmentRepository
 {
-
-    private static readonly int[] ActiveBookingStatuses =
+    public ApartmentRepository(ApplicationDbContext _context) 
+        : base(_context)
     {
-        (int)BookingStatus.Reserved,
-        (int)BookingStatus.Confirmed,
-        (int)BookingStatus.Completed
+    }
+
+    private static readonly BookingStatus[] ActiveBookingStatuses =
+    {
+        BookingStatus.Reserved,
+        BookingStatus.Confirmed,
+        BookingStatus.Completed
     };
 
-    public async Task<Apartment?> GetByIDAsync(
-        Guid id, 
-        CancellationToken cancellationToken = default)
-    {
-        return await _context
-            .Apartments
-            .FirstOrDefaultAsync(a => a.Id == id, cancellationToken);
-    }
 
     public async Task<IReadOnlyList<Apartment>> SearchAvaiableApartments(
         DateOnly startDate, 
         DateOnly endDate,
         CancellationToken cancellationToken = default)
     {
-        var apartments = await _context.Apartments
-            .Where(a => a.Bookings
-                .Any(b =>
-                       ActiveBookingStatuses.Contains((int)b.Status) &&
-                       b.Duration.Start <= endDate && b.Duration.End >= startDate))
-             .ToListAsync(cancellationToken);
+        return await _context.Apartments
+            .Where(a => !a.Bookings
+                   .Any(b =>
+                          ActiveBookingStatuses.Contains(b.Status) &&
+                          b.Duration.Start <= endDate && b.Duration.End >= startDate))
+            .ToListAsync(cancellationToken);
+    }
 
-        /// Select 
-
-
-        return apartments;
-
-
-
+    public async Task CreateApartmentAync(Apartment apartment, CancellationToken cancellationToken)
+    {
+        await _context.Set<Apartment>().AddAsync(apartment, cancellationToken);
     }
 }

@@ -8,7 +8,7 @@ internal sealed class GetBookingQueryHanlder(
         CancellationToken cancellationToken)
     {
         Booking? booking = await _bookingRepository
-            .GetByIdAsync(request.BookingId, cancellationToken);
+            .GetByIDAsync(request.BookingId, cancellationToken);
 
         if (booking is null)
         {

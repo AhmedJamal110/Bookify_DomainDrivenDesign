@@ -10,6 +10,10 @@ public abstract class BaseEntity
 
     public Guid Id { get; init; }
 
+    protected BaseEntity()
+    {
+        
+    }
 
     public IReadOnlyList<IDomainEvents> GetDomainEvents()
     {

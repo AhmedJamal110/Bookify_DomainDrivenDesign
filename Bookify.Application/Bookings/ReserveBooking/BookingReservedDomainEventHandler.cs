@@ -11,7 +11,7 @@ internal sealed class BookingReservedDomainEventHandler(
         BookingCancelledDomainEvents notification,
         CancellationToken cancellationToken)
     {
-        Booking? booking = await _bookingRepository.GetByIdAsync(notification.Id, cancellationToken);
+        Booking? booking = await _bookingRepository.GetByIDAsync(notification.Id, cancellationToken);
 
         if (booking is null)
         {

@@ -10,11 +10,12 @@ public static class DependencyInjection
         {
             config.RegisterServicesFromAssemblies(typeof(DependencyInjection).Assembly);
 
-            config.AddBehavior(typeof(LoggingBehavior<,>)); // Logging behavior
+            //config.AddBehavior(typeof(LoggingBehavior<,>)); // Logging behavior
 
         });
 
 
+        services.AddTransient<PricingService>();
 
         return services;
     }

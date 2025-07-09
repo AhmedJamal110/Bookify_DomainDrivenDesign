@@ -11,3 +11,5 @@ public static class UserErrors
         "User.InvalidCredentials",
         "The provided credentials were invalid");
 }
+
+

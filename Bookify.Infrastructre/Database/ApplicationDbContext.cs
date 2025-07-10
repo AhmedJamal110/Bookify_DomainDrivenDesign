@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using Bookify.Application.Exceptions;
 using Bookify.Infrastructre.Extensions;
 using MediatR;
 using Microsoft.EntityFrameworkCore.Storage;
@@ -23,17 +24,27 @@ public partial class ApplicationDbContext(
     public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
 
-        using IDbContextTransaction transaction =  await Database.BeginTransactionAsync(cancellationToken);
-       
-        int result = await base.SaveChangesAsync(cancellationToken);
-    
-        await PublishDomainEvents();
+        try
+        {
 
-        await transaction.CommitAsync(cancellationToken);
+            using IDbContextTransaction transaction = await Database.BeginTransactionAsync(cancellationToken);
 
-       
+            int result = await base.SaveChangesAsync(cancellationToken);
 
-        return result;
+            await PublishDomainEvents();
+
+            await transaction.CommitAsync(cancellationToken);
+
+
+
+            return result;
+
+        }
+        catch (ConcurrencyException ex)
+        {
+            throw new ConcurrencyException("Concurrency error occurred while saving changes.", ex);
+        }
+
     }
 
    

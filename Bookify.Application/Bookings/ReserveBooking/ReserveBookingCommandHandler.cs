@@ -51,7 +51,7 @@ internal sealed class ReserveBookingCommandHandler(
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             return Result.Success(booking.Id);
-        }
+        } 
         catch (ConcurrencyException)
         {
             return Result.Failure<Guid>(BookingErrors.Overlap);

@@ -7,6 +7,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Bookify.Domain\Bookify.Domain.csproj" />
+	  <PackageReference Include="FluentValidation" />
   </ItemGroup>
 
 </Project>

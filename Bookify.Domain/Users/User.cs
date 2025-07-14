@@ -24,6 +24,7 @@ public sealed class User : BaseEntity
     public FirstName FirstName { get; private set; }
     public LastName LastName { get; private set; }
     public Email Email { get; private set; }
+    public string IdentityId { get; private set; } 
 
 
     public static User Create(FirstName firstName,
@@ -39,6 +40,17 @@ public sealed class User : BaseEntity
         user.RaiseDomainEvent(new UserCreateDomainEvent(user.Id));    
 
         return user;
+    }
+
+
+    public void SetIdentityId(string identityId)
+    {
+        if (string.IsNullOrWhiteSpace(identityId))
+        {
+            throw new ArgumentException("Identity ID cannot be null or empty.", nameof(identityId));
+        }
+
+        IdentityId = identityId;
     }
 
 }
